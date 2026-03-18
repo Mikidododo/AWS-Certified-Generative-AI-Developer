@@ -1,0 +1,148 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary)}
+.kb-root{padding:16px 0}
+.kb-title{font-size:15px;font-weight:500;color:var(--color-text-secondary);margin-bottom:14px;letter-spacing:.02em}
+.kb-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kb-card{border:1px solid var(--color-border-tertiary);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.kb-card:hover{border-color:var(--color-border-primary)}
+.kb-card.active{border-color:var(--color-border-primary)}
+.kb-header{display:flex;align-items:center;gap:10px;padding:12px 14px}
+.kb-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.kb-htext{flex:1}
+.kb-htext h3{font-size:13px;font-weight:500;line-height:1.3}
+.kb-htext p{font-size:11px;color:var(--color-text-secondary);margin-top:2px;line-height:1.3}
+.kb-chevron{font-size:11px;color:var(--color-text-tertiary);transition:transform .2s;flex-shrink:0}
+.kb-card.active .kb-chevron{transform:rotate(180deg)}
+.kb-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.kb-card.active .kb-body{max-height:600px}
+.kb-divider{height:1px;background:var(--color-border-tertiary);margin:0 14px}
+.kb-content{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.kb-section{margin-bottom:2px}
+.kb-section-title{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.kb-tags{display:flex;flex-wrap:wrap;gap:5px}
+.kb-tag{font-size:11px;padding:3px 8px;border-radius:6px;line-height:1.4;border:1px solid transparent}
+
+.c1-icon{background:#EDE9FE;color:#6D28D9}
+.c1-tag{background:#EDE9FE;color:#5B21B6;border-color:#C4B5FD}
+.c2-icon{background:#DBEAFE;color:#1D4ED8}
+.c2-tag{background:#DBEAFE;color:#1E40AF;border-color:#93C5FD}
+.c3-icon{background:#D1FAE5;color:#065F46}
+.c3-tag{background:#D1FAE5;color:#065F46;border-color:#6EE7B7}
+.c4-icon{background:#FEF3C7;color:#92400E}
+.c4-tag{background:#FEF3C7;color:#78350F;border-color:#FCD34D}
+.c5-icon{background:#FCE7F3;color:#9D174D}
+.c5-tag{background:#FCE7F3;color:#831843;border-color:#F9A8D4}
+.c6-icon{background:#FFEDD5;color:#9A3412}
+.c6-tag{background:#FFEDD5;color:#7C2D12;border-color:#FDBA74}
+.c7-icon{background:#E0E7FF;color:#3730A3}
+.c7-tag{background:#E0E7FF;color:#312E81;border-color:#A5B4FC}
+.c8-icon{background:#F0FDF4;color:#14532D}
+.c8-tag{background:#F0FDF4;color:#14532D;border-color:#86EFAC}
+
+@media(prefers-color-scheme:dark){
+.c1-icon{background:#3B1F6E;color:#C4B5FD}.c1-tag{background:#2E1760;color:#DDD6FE;border-color:#6D28D9}
+.c2-icon{background:#1E3A5F;color:#93C5FD}.c2-tag{background:#1E3A5F;color:#BFDBFE;border-color:#1D4ED8}
+.c3-icon{background:#064E3B;color:#6EE7B7}.c3-tag{background:#064E3B;color:#A7F3D0;border-color:#059669}
+.c4-icon{background:#451A03;color:#FCD34D}.c4-tag{background:#451A03;color:#FDE68A;border-color:#D97706}
+.c5-icon{background:#500724;color:#F9A8D4}.c5-tag{background:#500724;color:#FBCFE8;border-color:#BE185D}
+.c6-icon{background:#431407;color:#FDBA74}.c6-tag{background:#431407;color:#FED7AA;border-color:#EA580C}
+.c7-icon{background:#1E1B4B;color:#A5B4FC}.c7-tag{background:#1E1B4B;color:#C7D2FE;border-color:#4338CA}
+.c8-icon{background:#052E16;color:#86EFAC}.c8-tag{background:#052E16;color:#BBF7D0;border-color:#16A34A}
+}
+
+.kb-note{font-size:11px;color:var(--color-text-tertiary);padding:8px 14px 12px;line-height:1.5;border-top:1px solid var(--color-border-tertiary)}
+.legend{display:flex;align-items:center;gap:6px;margin-bottom:12px;font-size:11px;color:var(--color-text-secondary)}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+</style>
+
+<div class="kb-root">
+<div class="legend">
+  <div class="legend-dot" style="background:#7C3AED"></div>点击卡片展开详情
+</div>
+
+<div class="kb-grid" id="grid"></div>
+</div>
+
+<script>
+const data=[
+{id:1,icon:"🧠",cls:"c1",title:"Foundation Models（基础模型）",sub:"核心：模型目录与访问机制",note:"考点：各模型能力对比、模态差异、on-demand vs provisioned 计费模式",sections:[
+  {t:"Amazon 自研",tags:["Amazon Titan Text","Amazon Titan Embeddings","Amazon Titan Image","Amazon Titan Multimodal"]},
+  {t:"第三方合作伙伴",tags:["Anthropic Claude 3 系列","Meta Llama 3","Mistral AI","Cohere Command","AI21 Jamba","Stability AI (图像)"]},
+  {t:"模型能力类型",tags:["文本生成 (Text)","对话 (Chat)","嵌入向量 (Embeddings)","图像生成 (Image)","多模态 (Multimodal)"]},
+  {t:"访问方式",tags:["Model Access 申请","Playground 试用","API InvokeModel","Converse API"]},
+]},
+{id:2,icon:"⚡",cls:"c2",title:"Inference（推理与调用）",sub:"API 调用、参数、流式响应",note:"考点：InvokeModel vs Converse API 差异；inference parameters 对输出的影响",sections:[
+  {t:"推理 API",tags:["InvokeModel API","InvokeModelWithResponseStream","Converse API","ConverseStream API"]},
+  {t:"推理参数",tags:["Temperature","Top-P","Top-K","Max Tokens","Stop Sequences"]},
+  {t:"吞吐量模式",tags:["On-Demand（按量计费）","Provisioned Throughput（预置吞吐）","Batch Inference（批量推理）"]},
+  {t:"Model Distillation",tags:["Teacher model → Student model","缩小模型体积","降低推理成本"]},
+]},
+{id:3,icon:"🔧",cls:"c3",title:"Customization（模型定制）",sub:"Fine-tuning、持续预训练、评估",note:"考点：何时用 fine-tuning vs RAG；数据格式要求（JSONL）；任务类型区别",sections:[
+  {t:"Fine-tuning（指令微调）",tags:["有监督微调 (SFT)","自定义训练数据 (JSONL)","任务特定行为调整","需要标注数据"]},
+  {t:"Continued Pre-training",tags:["使用领域数据继续预训练","无监督学习","注入领域知识","适合专有语料"]},
+  {t:"Model Evaluation",tags:["自动评估 (Automatic)","人工评估 (Human)","评估指标：ROUGE/BERTScore","Benchmark 对比"]},
+]},
+{id:4,icon:"🤖",cls:"c4",title:"Bedrock Agents（智能体）",sub:"自主规划、工具调用、多步任务",note:"考点：ReAct 框架；Action Groups 配置；与 Lambda 集成；Memory 机制",sections:[
+  {t:"核心机制",tags:["ReAct 推理框架","多步骤规划","工具调用 (Tool Use)","会话记忆 (Memory)"]},
+  {t:"Action Groups",tags:["OpenAPI Schema 定义","AWS Lambda 函数","Return of Control (RoC)","内置工具（代码解释器）"]},
+  {t:"Multi-Agent 协作",tags:["Supervisor Agent","Sub-agents","任务分发与汇总","并行执行"]},
+  {t:"与其他服务集成",tags:["Knowledge Bases（RAG）","Guardrails（内容过滤）","CloudWatch（监控）"]},
+]},
+{id:5,icon:"📚",cls:"c5",title:"Knowledge Bases（知识库）",sub:"RAG 架构、向量检索、数据摄取",note:"考点：RAG 工作流程；向量数据库选型；chunking 策略对检索质量的影响",sections:[
+  {t:"RAG 工作流",tags:["数据摄取 (Ingestion)","文档分块 (Chunking)","向量化 (Embedding)","语义检索 (Retrieval)","增强生成 (Generation)"]},
+  {t:"支持的向量数据库",tags:["Amazon OpenSearch Serverless","Amazon Aurora (pgvector)","MongoDB Atlas","Pinecone","Redis Enterprise"]},
+  {t:"数据源",tags:["Amazon S3","Confluence","SharePoint","Salesforce","Web Crawler"]},
+  {t:"Chunking 策略",tags:["Fixed-size chunking","Semantic chunking","Hierarchical chunking","No chunking"]},
+  {t:"嵌入模型",tags:["Amazon Titan Embeddings V2","Cohere Embed","多语言支持"]},
+]},
+{id:6,icon:"🛡️",cls:"c6",title:"Guardrails（内容护栏）",sub:"安全过滤、话题管控、信息保护",note:"考点：各过滤维度的作用；Grounding Check 原理；与 Agents/KB 联动",sections:[
+  {t:"过滤维度",tags:["仇恨内容","侮辱内容","性内容","暴力内容","违禁话题 (Misconduct)"]},
+  {t:"功能模块",tags:["Denied Topics（拒绝话题）","Word Filters（词汇过滤）","Sensitive Info Redaction（信息脱敏）","Grounding Check（幻觉检测）","Contextual Grounding"]},
+  {t:"PII 脱敏类型",tags:["姓名 / 邮箱 / 电话","信用卡号","社会安全号 (SSN)","IP 地址","自定义正则"]},
+  {t:"适用范围",tags:["Input + Output 双向过滤","与 Agents 集成","与 Knowledge Bases 集成","独立 ApplyGuardrail API"]},
+]},
+{id:7,icon:"🔄",cls:"c7",title:"Bedrock Flows & Prompt Mgmt",sub:"可视化编排、提示词版本管理",note:"考点：Flows 节点类型；Prompt Management 版本控制；System Prompt 最佳实践",sections:[
+  {t:"Bedrock Flows（可视化流程）",tags:["拖拽式节点编排","Prompt 节点","Condition 节点","Iterator 节点","Lambda 节点","KB 检索节点"]},
+  {t:"Prompt Management",tags:["Prompt 模板创建","版本管理 (Versioning)","变量插值 ({{}})","System Prompt 管理","跨区域复用"]},
+  {t:"Prompt Engineering 技巧",tags:["Zero-shot","Few-shot","Chain-of-Thought","Role prompting","XML 结构化输出"]},
+]},
+{id:8,icon:"🔒",cls:"c8",title:"安全、监控与治理",sub:"IAM、加密、日志、合规",note:"考点：VPC 私有端点；CloudTrail 审计；Model Invocation Logging；跨区域推理",sections:[
+  {t:"身份与访问控制",tags:["IAM Roles / Policies","Resource-based policies","Service Control Policies (SCP)","跨账号访问"]},
+  {t:"网络安全",tags:["VPC Endpoints (PrivateLink)","无公网流量","Security Groups","网络隔离"]},
+  {t:"数据加密",tags:["传输加密 (TLS)","静态加密 (AES-256)","AWS KMS 托管密钥","自带密钥 (BYOK)"]},
+  {t:"监控与审计",tags:["CloudTrail（API 审计）","CloudWatch Metrics","Model Invocation Logging","Bedrock Studio 治理"]},
+  {t:"合规与治理",tags:["跨区域推理 (Cross-region)","Model Cards","Amazon Bedrock Studio","水印检测（图像）"]},
+]},
+];
+
+const grid=document.getElementById('grid');
+data.forEach(d=>{
+  const card=document.createElement('div');
+  card.className='kb-card';
+  const sections=d.sections.map(s=>`
+    <div class="kb-section">
+      <div class="kb-section-title">${s.t}</div>
+      <div class="kb-tags">${s.tags.map(t=>`<span class="kb-tag ${d.cls}-tag">${t}</span>`).join('')}</div>
+    </div>
+  `).join('');
+  card.innerHTML=`
+    <div class="kb-header">
+      <div class="kb-icon ${d.cls}-icon">${d.icon}</div>
+      <div class="kb-htext"><h3>${d.title}</h3><p>${d.sub}</p></div>
+      <span class="kb-chevron">▼</span>
+    </div>
+    <div class="kb-body">
+      <div class="kb-divider"></div>
+      <div class="kb-content">${sections}</div>
+      <div class="kb-note">💡 ${d.note}</div>
+    </div>`;
+  card.querySelector('.kb-header').addEventListener('click',()=>{
+    const isActive=card.classList.contains('active');
+    document.querySelectorAll('.kb-card').forEach(c=>c.classList.remove('active'));
+    if(!isActive) card.classList.add('active');
+  });
+  grid.appendChild(card);
+});
+</script>
